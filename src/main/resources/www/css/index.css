@@ -1,0 +1,162 @@
+@import url(http://fonts.googleapis.com/css?family=Comfortaa:400,300,700|Open+Sans:300italic,400italic,600italic,700italic,800italic,400,800,700,600,300);
+*{
+    padding:0px;
+    margin:0px;
+}
+body{
+    background: #B1B1B1;
+    font-family: 'Open Sans', sans-serif;
+}
+section.top_menu{
+    height:48px;
+    width:100%;
+    background: #2e2e2e;
+}
+section.header{
+    height:530px;
+    width:100%;
+    border-bottom:2px solid #16a29a;
+    border-top:1px solid #4b4b4b;
+    background: #00827B; /* Old browsers */
+    background: -moz-linear-gradient(top,  #1dada5 0%, #00827B 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#1dada5), color-stop(100%,#00827B)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #1dada5 0%,#00827B 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #1dada5 0%,#00827B 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #1dada5 0%,#00827B 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #1dada5 0%,#00827B 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1dada5', endColorstr='#00827B',GradientType=0 ); /* IE6-9 */
+}
+.half-size{
+    width:50%;
+    float:left;
+}
+.half-size ul{
+    list-style:none;
+    float:right;
+    margin-right:10%;
+}
+.half-size ul li{
+    float:left;
+    display:block;
+    margin:12px;
+    margin-top:12px;
+    margin-bottom:0px;
+}
+.half-size ul li a{
+    padding:15px;
+    padding-top:4px;
+    padding-bottom:4px;
+    background:#323232;
+    font-size:14px;
+    border-radius: 5px;
+    color:#fff;
+    text-decoration:none;
+    border:1px solid #555;
+}
+
+.half-size>h2{
+    font-size:20px;
+    color:#fff;
+    margin:10px;
+}
+.half-size>h2>a{
+    font-size:20px;
+    color:#fff;
+    text-decoration:none;
+}
+div.left450{
+    width:900px;
+    position:relative;
+    padding-top:20px;
+    display:block;
+    left:50%;
+    height:450px;
+    margin-left:-450px;
+}
+.content-wrap{
+    background:#fff;
+    width:1200px;
+    position:relative;
+    float:left;
+    border-radius:5px;
+    border-top:23px solid #AD235E;
+    height:auto;
+    box-shadow: 0px 0px 3px #000;
+    margin:20px;
+    margin-left:-600px;
+    left:50%;
+    margin-top:-25px;
+    margin-bottom:50px;
+}
+.content-wrap>h2{
+    font-size:20px;
+    margin:20px;
+    color:#5d95db;
+    font-weight:bold;
+}
+.content-wrap>.inner{
+    padding:0px;
+    margin:20px;
+    display:block;
+}
+.content-wrap>.inner>p{
+    padding:10px;
+    padding-left:20px;
+    display:block;
+    font-size:15px;
+    display:block;
+}
+.button{
+    background: #f8f8f8; /* Old browsers */
+    background: -moz-linear-gradient(top,  #f8f8f8 0%, #eaeaea 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#eaeaea)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #f8f8f8 0%,#eaeaea 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #f8f8f8 0%,#eaeaea 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #f8f8f8 0%,#eaeaea 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #f8f8f8 0%,#eaeaea 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8f8f8', endColorstr='#eaeaea',GradientType=0 ); /* IE6-9 */
+    padding:20px;
+    padding-left:15px;
+    float:left;
+    border-radius:5px;
+    margin:10px;
+    padding-right:15px;
+    border:#e8e8e8 2px solid;
+    max-width:346px;
+    height:270px;
+}
+.button h2{
+    font-size:15px;
+    text-align:center;
+    padding-top:10px;
+    width:100%;
+}
+.button img{
+    width:342px;
+    border:2px solid #fff;
+    border-radius:2px;
+}
+.button p{
+    width:100%;
+    font-size:14px;
+    display:block;
+    font-style:italic;
+    padding:7px;
+}
+.button a{
+    color:#AD235E;
+    text-decoration:none;
+}
+.button a:hover{
+    text-decoration:underline;
+}
+section.footer{
+    width:100%;
+    height:30px;
+    text-align:center;
+    font-size:14px;
+    padding-top:10px;
+    float:left;
+    color:#fff;
+    background:#282828;
+}
