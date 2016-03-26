@@ -1,7 +1,7 @@
 package com.synload.site.elements;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
+import java.util.*;
 import com.synload.framework.handlers.Response;
 import com.synload.framework.modules.ModuleLoader;
 import com.synload.framework.ws.WSHandler;
@@ -16,6 +16,9 @@ public class StaticPage extends Response {
 				e.printStackTrace();
 			}
 		}
+		Map<String, String> l = new HashMap<String, String>();
+		l.put("modules", ModuleLoader.loadedModules.values().toString());
+		this.setData(l);
 		this.setParent(parent);
 		this.setParentTemplate(parentTemplate);
 		this.setAction("alone");
