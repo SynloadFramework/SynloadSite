@@ -50,8 +50,8 @@
                 <p>Example: <a target="_blank" href="http://animecap.com">Animecap Main Site</a></p>
             </div>
             <script type="text/javascript">
-            console.log("{{modules}}");
-				var data = $.parseJSON("{{modules}}");
+            console.log("{{data.modules}}");
+				var data = $.parseJSON("{{data.modules}}");
 				$("#modules").html("");
 				$.each(data,function(i,v){
 			    	if($("#modules").html()!=""){
