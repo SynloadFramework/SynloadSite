@@ -484,13 +484,15 @@ So here we are, another developers blog.. This blog will contain updates on my p
 	$("section.header").html($("#sheader").html());
 </script>
 <script type="text/javascript">
-	var data = {{modules}};
-	$("#modules").html("");
-	$.each(data,function(i,v){
-    	if($("#modules").html()!=""){
-    		$("#modules").html($("#modules").html()+",")
-    	}
-		$("#modules").html($("#modules").html()+" "+v.name+" v"+v.version);
-	});
+	var data = $.parseJSON("{{modules}}");
+	{literal}
+		$("#modules").html("");
+		$.each(data,function(i,v){
+	    	if($("#modules").html()!=""){
+	    		$("#modules").html($("#modules").html()+",")
+	    	}
+			$("#modules").html($("#modules").html()+" "+v.name+" v"+v.version);
+		});
+	{/literal}
 </script>
 <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=css&skin=sunburst"></script>
