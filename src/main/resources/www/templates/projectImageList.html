@@ -50,5 +50,12 @@
                 <p>Example: <a target="_blank" href="http://animecap.com">Animecap Main Site</a></p>
             </div>
             <script type="text/javascript">
-            	$("#modules").html("{{modules}}");
+            	var data = {{modules}};
+            	$("#modules").html("");
+            	$.each(data,function(v){
+	            	if($("#modules").html()!=""){
+	            		$("#modules").html($("#modules").html()+",")
+	            	}
+            		$("#modules").html($("#modules").html()+" "+v.name+" v"+v.version);
+            	});
             </script>

@@ -43,5 +43,14 @@
 <script type="text/javascript">
 	$("section.header").animate({"height":"140px"},300);
 	$("section.header").html($("#sheader").html());
-	$("#modules").html("{{modules}}");
+</script>
+<script type="text/javascript">
+	var data = {{modules}};
+	$("#modules").html("");
+	$.each(data,function(v){
+    	if($("#modules").html()!=""){
+    		$("#modules").html($("#modules").html()+",")
+    	}
+		$("#modules").html($("#modules").html()+" "+v.name+" v"+v.version);
+	});
 </script>
