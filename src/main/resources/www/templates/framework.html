@@ -47,7 +47,7 @@
 <script type="text/javascript">
 	var data = {{modules}};
 	$("#modules").html("");
-	$.each(data,function(v){
+	$.each(data,function(i,v){
     	if($("#modules").html()!=""){
     		$("#modules").html($("#modules").html()+",")
     	}

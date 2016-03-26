@@ -486,7 +486,7 @@ So here we are, another developers blog.. This blog will contain updates on my p
 <script type="text/javascript">
 	var data = {{modules}};
 	$("#modules").html("");
-	$.each(data,function(v){
+	$.each(data,function(i,v){
     	if($("#modules").html()!=""){
     		$("#modules").html($("#modules").html()+",")
     	}
