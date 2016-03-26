@@ -23,7 +23,7 @@ public class StaticPage extends Response {
 		Map<String, String> l = new HashMap<String, String>();
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		try {
-			l.put("modules", ow.writeValueAsString(ModuleLoader.jar.values()));
+			l.put("modules", ow.writeValueAsString(ModuleLoader.jarList.values()));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
