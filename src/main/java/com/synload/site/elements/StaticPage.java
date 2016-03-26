@@ -2,6 +2,10 @@ package com.synload.site.elements;
 
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.synload.framework.handlers.Response;
 import com.synload.framework.modules.ModuleLoader;
 import com.synload.framework.ws.WSHandler;
@@ -17,7 +21,12 @@ public class StaticPage extends Response {
 			}
 		}
 		Map<String, String> l = new HashMap<String, String>();
-		l.put("modules", ModuleLoader.loadedModules.values().toString());
+		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+		try {
+			l.put("modules", ow.writeValueAsString(ModuleLoader.jar.values()));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 		this.setData(l);
 		this.setParent(parent);
 		this.setParentTemplate(parentTemplate);
