@@ -169,6 +169,9 @@ section.footer{
     text-align:center;
     font-size:14px;
     padding-top:10px;
+    top:100%;
+    position:fixed;
+    margin-top:-30px;
     float:left;
     color:#fff;
     background:#282828;
