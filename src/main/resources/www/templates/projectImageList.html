@@ -51,13 +51,11 @@
             </div>
             <script type="text/javascript">
 				var data = $.parseJSON("{{modules}}");
-				{literal}
-					$("#modules").html("");
-					$.each(data,function(i,v){
-				    	if($("#modules").html()!=""){
-				    		$("#modules").html($("#modules").html()+",")
-				    	}
-						$("#modules").html($("#modules").html()+" "+v.name+" v"+v.version);
-					});
-				{/literal}
+				$("#modules").html("");
+				$.each(data,function(i,v){
+			    	if($("#modules").html()!=""){
+			    		$("#modules").html($("#modules").html()+",")
+			    	}
+					$("#modules").html($("#modules").html()+" "+v.name+" v"+v.version);
+				});
 			</script>
