@@ -26,6 +26,19 @@ section.header{
     background: linear-gradient(to bottom,  #1dada5 0%,#00827B 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1dada5', endColorstr='#00827B',GradientType=0 ); /* IE6-9 */
 }
+section.header h3{
+	font-size:25px;
+	margin-left:10%;
+	margin-top:20px;
+	color:#fff;
+	
+}
+section.header h4{
+	color:#befaa1;
+	margin-left:11%;
+	margin-top:5px;
+	font-size:16px;
+}
 .half-size{
     width:50%;
     float:left;
@@ -159,4 +172,35 @@ section.footer{
     float:left;
     color:#fff;
     background:#282828;
+}
+.half-size ul{
+	list-style:none;
+	float:right;
+	margin-right:10%;
+}
+.half-size ul li{
+	float:left;
+	display:block;
+	margin:12px;
+	margin-top:12px;
+	margin-bottom:0px;
+}
+.half-size ul li a{
+	padding:15px;
+	padding-top:4px;
+	padding-bottom:4px;
+	background:#323232;
+	font-size:14px;
+	border-radius: 5px;
+	color:#fff;
+	text-decoration:none;
+	border:1px solid #555;
+}
+.content-wrap .inner .img {
+  min-width:50%;
+  max-width:75%;
+  float:auto;
+  box-shadow: 0px 0px 20px #eff8ff;
+  border:3px solid #d4eeff;
+  border-radius: 16px;
 }
