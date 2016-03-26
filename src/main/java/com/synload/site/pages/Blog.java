@@ -8,17 +8,17 @@ import com.synload.framework.modules.annotations.Event;
 import com.synload.framework.modules.annotations.Event.Type;
 import com.synload.site.elements.StaticPage;
 
-public class ProjectList {
-	@Event(name="ProjectList.getGalleryPage", description="projectlist",trigger={"get","projectlist"},flags={},type=Type.WEBSOCKET)
-	public void getGalleryPage(RequestEvent event) throws JsonProcessingException, IOException{
+public class Blog {
+	@Event(name="Blog.getBlogPage", description="getBlogPage",trigger={"get","blog"},flags={},type=Type.WEBSOCKET)
+	public void getBlogPage(RequestEvent event) throws JsonProcessingException, IOException{
 		event.getSession().send(
 			new StaticPage(
 				event.getSession(),
 				event.getRequest().getTemplateCache(),
-				"templates/projectImageList.html",
+				"templates/blogentry.html",
 				"section.content-wrap",
 				"index",
-				" Project List"
+				" Blog"
 			)
 		);
 	}

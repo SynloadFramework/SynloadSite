@@ -1,8 +1,19 @@
             <div class="half-size">
                 <ul>
-                    <li><a href="http://synload.com/blog">Dev Blog</a></li>
-                    <li><a href="http://synload.com/framework">Framework</a></li>
-                    <li><a href="http://synload.com/projects">Active Projects</a></li>
-                    <li><a href="http://synload.com/contact">Contact</a></li>
+                    <li><a href="#" id="menu-link-blog">Dev Blog</a></li>
+                    <li><a href="#" id="menu-link-framework">Framework</a></li>
+                    <li><a href="#" id="menu-link-projects">Active Projects</a></li>
+                    <li><a href="mailto:nathanieldavidson@gmail.com">Contact</a></li>
                 </ul>
             </div>
+            <script>
+            	$('#menu-link-projects').click(function(){
+            		_sf.request('get','projectlist');
+            	});
+            	$('#menu-link-blog').click(function(){
+            		_sf.request('get','blog');
+            	});
+            	$('#menu-link-framework').click(function(){
+            		_sf.request('get','framework');
+            	});
+            </script>

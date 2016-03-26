@@ -18,7 +18,7 @@ public class Menu {
 				"templates/menu.html",
 				"div.menu",
 				"index",
-				"Synload Home"
+				" Home"
 			)
 		);
 	}

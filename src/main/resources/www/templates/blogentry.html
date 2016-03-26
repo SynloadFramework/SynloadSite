@@ -1,1 +1,485 @@
-Template
+<h2>Jenkins Installation Guide - 2016-3-16</h2>
+					<div class="inner">
+						
+
+Installation of jenkins [Make sure you follow every step! (unless indicated as optional)]
+
+<pre class="prettyprint">
+wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
+sudo apt-get update
+sudo apt-get install jenkins
+</pre>
+
+
+
+Installation of android tools
+<pre class="prettyprint">
+wget dl.google.com/android/android-sdk_r24.4.1-linux.tgz
+</pre>
+<br/>
+<pre class="prettyprint">
+./android update sdk --no-ui
+</pre>					</div>
+					<hr/>										<h2>PHP Dynamic Models - 2015-08-03</h2>
+					<div class="inner">
+						
+
+Every wonder if PHP can have the best of other better languages? Well in the case of easy to use models, it can. Here is a basic implementation to enable dynamic models.
+<br/><br/>
+Model.php
+<pre class="prettyprint">
+&#x3C;?php
+
+/**
+ * Created by PhpStorm.
+ * User: Nathaniel
+ * Date: 8/2/2015
+ * Time: 10:07 AM
+ */
+class Model
+{
+    public function __call($method,$arguments) {
+        global $mysqli;
+        $argumentCount = count($arguments);
+        $vars = array_keys(get_object_vars($this));
+        if (preg_match(&#x27;/getBy/&#x27;, $method) || preg_match(&#x27;/getAll/&#x27;, $method)) {
+            $params = preg_replace(&#x27;/getBy/&#x27;, &#x27;&#x27;, $method);
+            $params = preg_replace(&#x27;/getAll/&#x27;, &#x27;&#x27;, $params);
+            $sql = &#x22;&#x22;;
+            if(!preg_match(&#x27;/getAll/&#x27;, $method)) { // If its an all ignore all attempts at splitting
+                $result = preg_split(&#x27;/And/&#x27;, $params);
+                $items = [];
+                $count = count($result);
+                for ($x = 0; $x &#x3C; $count; $x++) {
+                    $rtmp = preg_split(&#x27;/Or/&#x27;, $result[$x]);
+                    $items[] = [((!$count) ? &#x22;&#x22; : &#x22;and&#x22;), $rtmp[0]];
+                    $count_inner = count($rtmp);
+                    for ($c = 1; $c &#x3C; $count_inner; $c++) {
+                        $items[] = [&#x22;or&#x22;, $rtmp[$c]];
+                    }
+                }
+                $count = count($items);
+                for ($v = 0; $v &#x3C; $count; $v++) {
+                    if (preg_match(&#x27;/(:|LessThan|Not|In|GreaterThan|)([a-zA-Z0-9_]+)/&#x27;, $items[$v][1], $regs)) {
+                        $items[$v] = [$items[$v][0], $regs[2], $regs[1]];
+                    }
+                    if (!in_array(strtolower($items[$v][1]), $vars)) {
+                        exit(&#x22;Unknown Column &#x60;&#x22; . strtolower($regs[2]) . &#x22;&#x60; in the table &#x60;&#x22; . strtolower(get_class($this)) . &#x22;&#x60;&#x22;);
+                    }
+                    switch ($items[$v][2]) {
+                        case &#x22;GreaterThan&#x22;:
+                            $sql .= &#x22; &#x22; .
+                                (($items[$v][0] != &#x22;&#x22;) ? strtoupper($items[$v][0]) : &#x22;&#x22;) .
+                                &#x22; &#x60;&#x22; . strtolower($items[$v][1]) . &#x22;&#x60;&#x3E;&#x27;&#x22; .
+                                $mysqli-&#x3E;real_escape_string($arguments[$v]) . &#x22;&#x27;&#x22;;
+                            break;
+                        case &#x22;LessThan&#x22;:
+                            $sql .= &#x22; &#x22; .
+                                (($items[$v][0] != &#x22;&#x22;) ? strtoupper($items[$v][0]) : &#x22;&#x22;) .
+                                &#x22; &#x60;&#x22; . strtolower($items[$v][1]) . &#x22;&#x60;&#x3C;&#x27;&#x22; .
+                                $mysqli-&#x3E;real_escape_string($arguments[$v]) . &#x22;&#x27;&#x22;;
+                            break;
+                        case &#x22;Not&#x22;:
+                            $sql .= &#x22; &#x22; .
+                                (($items[$v][0] != &#x22;&#x22;) ? strtoupper($items[$v][0]) : &#x22;&#x22;) .
+                                &#x22; &#x60;&#x22; . strtolower($items[$v][1]) . &#x22;&#x60;!=&#x27;&#x22; .
+                                $mysqli-&#x3E;real_escape_string($arguments[$v]) . &#x22;&#x27;&#x22;;
+                            break;
+                        case &#x22;In&#x22;:
+                            $sql .= &#x22; &#x22; .
+                                (($items[$v][0] != &#x22;&#x22;) ? strtoupper($items[$v][0]) : &#x22;&#x22;) .
+                                &#x22; &#x60;&#x22; . strtolower($items[$v][1]) . &#x22;&#x60; IN (&#x22; . implode(&#x22;,&#x22;, $arguments[$v]) . &#x22;)&#x22;;
+                            break;
+                        default:
+                            $sql .= &#x22; &#x22; .
+                                (($items[$v][0] != &#x22;&#x22;) ? strtoupper($items[$v][0]) : &#x22;&#x22;) .
+                                &#x22; &#x60;&#x22; . strtolower($items[$v][1]) . &#x22;&#x60;=&#x27;&#x22; .
+                                $mysqli-&#x3E;real_escape_string($arguments[$v]) . &#x22;&#x27;&#x22;;
+                            break;
+                    }
+                }
+            }
+            $extra = &#x22;&#x22;;
+            if (preg_match(&#x27;/(:|OrderBy|Limit)/i&#x27;, $arguments[$argumentCount-1])) {
+                $extra = &#x22; &#x22;.$arguments[$argumentCount-1];
+            }
+            echo &#x22;SELECT * FROM &#x60;&#x22; . strtolower(get_class($this)) . &#x22;&#x60;&#x22;.(($sql!=&#x22;&#x22;)?&#x22; WHERE &#x22;. $sql:&#x22;&#x22;) . $extra;
+            if ($stmt = $mysqli-&#x3E;prepare(&#x22;SELECT * FROM &#x60;&#x22; . strtolower(get_class($this)) . &#x22;&#x60;&#x22;.(($sql!=&#x22;&#x22;)?&#x22; WHERE &#x22;. $sql:&#x22;&#x22;) . $extra)) {
+                $elements = [];
+                $variables = get_object_vars($this);
+                $tmp = [];
+                foreach($variables as $key=&#x3E;$val){
+                    $tmp[]=&#x26;$variables[$key];
+                }
+                call_user_func_array(array($stmt, &#x27;bind_result&#x27;), $tmp);
+                $stmt-&#x3E;execute();
+                while($stmt-&#x3E;fetch()){
+                    $clazz = get_class($this);
+                    $newElement = new $clazz;
+                    foreach($variables as $key=&#x3E;$val){
+                        $newElement-&#x3E;$key = $val;
+                    }
+                    $elements[] = $newElement;
+                }
+                return $elements;
+            }
+        }else if (preg_match(&#x27;/^get([a-zA-Z0-9_]+)$/&#x27;, $method)) {
+            preg_match_all(&#x27;/^get([a-zA-Z0-9_]+)$/&#x27;, $method, $result, PREG_PATTERN_ORDER);
+            $cnt = count($result[0]);
+            for ($i = 0; $i &#x3C; $cnt; $i++) {
+                $key = strtolower($result[1][$i]);
+                return $this-&#x3E;$key;
+            }
+        }else if (preg_match(&#x27;/^set([a-zA-Z0-9_]+)$/&#x27;, $method)) {
+            preg_match_all(&#x27;/^set([a-zA-Z0-9_]+)$/&#x27;, $method, $result, PREG_PATTERN_ORDER);
+            $cnt = count($result[0]);
+            for ($i = 0; $i &#x3C; $cnt; $i++) {
+                $key = strtolower($result[1][$i]);
+                $this-&#x3E;$key = $arguments[0];
+                return $this;
+            }
+        }else if (preg_match(&#x27;/save/&#x27;, $method)) {
+            $by = $arguments[0];
+            if($by==&#x22;&#x22;){
+                exit(&#x27;Required field for key not set for save for class &#x27;.get_class($this));
+            }
+            $vars = array_keys(get_object_vars($this));
+            if(!in_array($by,$vars)){
+                $possible = [];
+                foreach($vars as $var){
+                    if(similar_text($var,$by)&#x3E;=2){
+                        $possible[]=$var;
+                    }
+                }
+                exit(&#x22;Required field key not found for save for class &#x22;.
+                    get_class($this).
+                    ((count($possible)==0)?&#x22;&#x22;:&#x22; [ possibly meant &#x22;.implode(&#x22;, or &#x22;,$possible).&#x22;? ]&#x22;));
+            }
+            $by_val=&#x22;&#x22;;
+            $values = [];
+            foreach(get_object_vars($this) as $key=&#x3E;$val){
+                if($key==$by){
+                    $by_val = $mysqli-&#x3E;real_escape_string($val);
+                }else{
+                    $values[] =&#x22;&#x60;&#x22;.$key.&#x22;&#x60;=&#x27;&#x22;.$mysqli-&#x3E;real_escape_string($val).&#x22;&#x27;&#x22;;
+                }
+            }
+            if($by_val!=&#x22;&#x22; &#x26;&#x26; count($values)&#x3E;0){
+                if ($stmt = $mysqli-&#x3E;prepare(
+                    &#x22;UPDATE &#x60;&#x22; . strtolower(get_class($this)) . &#x22;&#x60; SET &#x22;.implode(&#x22;,&#x22;, $values).&#x22; WHERE &#x60;&#x22;.$by.&#x22;&#x60;=&#x27;&#x22; .$by_val. &#x22;&#x27;&#x22;
+                )) {
+                    $stmt-&#x3E;execute();
+                }
+            }
+        }
+    }
+}</pre>
+<br/><br/>
+User.php
+<pre class="prettyprint">
+&#x3C;?php
+class User extends Model{
+    public $id, $user, $email, $password;
+}
+</pre>
+<br/><br/>
+<pre class="prettyprint">
+&#x3C;?php
+include &#x22;Model.php&#x22;;
+include &#x22;User.php&#x22;;
+// INSERT CONNECT TO MYSQLI
+$user = (new User())-&#x3E;getById(1)[0];
+echo $user-&#x3E;getEmail();
+// Or
+$users = (new User())-&#x3E;getAll(&#x22;ORDER BY &#x60;user&#x60; DESC LIMIT 5&#x22;);
+</pre>					</div>
+					<hr/>										<h2>Annoyed by too many tabs? - 2013-12-21</h2>
+					<div class="inner">
+						
+<center><img src="data:image/jpeg;base64,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"></center>
+<p>Annoyed by too many tabs open in chrome? fix that by saving a window for later. 
+This chrome extension will save all the tabs urls to the synload server. 
+This is stored and accessible only by a unique key that is generated on the client side, this includes encryption of the urls.
+ Even if there is a security breach there will be no possibility to link it back to you or to find out what urls you stored.<br/><br/>This is a development build and is still in the testing phase.</p>
+<p><a href="/downloads/tabsaver.crx">Download Chrome Extension</a></p>
+
+<h6>Coded in [ Javascript, PHP, MySQL, JSON ]</h6>					</div>
+					<hr/>										<h2>Synchronized Video Player - 2013-9-14</h2>
+					<div class="inner">
+						
+<center><img src="/media/lider3.jpg" class="img"></center>
+<p>So there are many issues that relate to video playback for groups of people. As this is a problem that I have encountered several times, a low cost solution was needed. Using websockets as a medium between the other members of the group. It does this by keeping track of each group members progress in the video.</p>
+<p>The main issue is how to handle the group timings, should the entire group have the power to tell others to slow down, or to speed up. This would cause several issues some of which are security based. You would have people being able to join a group then forcing people to constantly pause/play, or load other videos. 
+So another solution which was ultimately chosen, a leader based group video player. There would be one leader of a session. The leader controls the groups video players, both manually and automatically. The group members are sent commands to keep up with the leader which are play/pause/seek/loading new videos. This technique keeps the group members synced and watching together within 2 seconds in video progress from the leader ( bandwidth issues can impact the sync % ). When a leader has left the group, the new leader is chosen from the remaining group members in order of who connected.</p>
+<p><a href="http://video.synload.com/group">Link will go here for the video player</a></p>
+
+<h6>Coded in [ PHP, JAVA, Javascript, Websockets, Ajax ]</h6>					</div>
+					<hr/>										<h2>Paypal REST API Class - 2013-4-28</h2>
+					<div class="inner">
+						
+<p>
+<center><img src="/media/54dcbc07114d9359f8b97242f3f2da11.jpg" class="img" /></center>
+	<pre class="prettyprint">
+&lt;?php
+class PayPal{
+    private $auth;
+    private $options;
+    private $tData;
+    private $m;
+    public function __construct($clientID,$secret,$options){
+        $this-&gt;auth=$clientID.&quot;:&quot;.$secret;
+        $this-&gt;grabToken();
+        $this-&gt;options = $options;
+        $this-&gt;m = new Memcached();
+        $this-&gt;m-&gt;addServers(array(
+            array(&#39;127.0.0.1&#39;,11211),
+        ));
+    }
+    private function grabToken(){
+        $tokenReq = curl_init();
+        $postData=&quot;grant_type=client_credentials&quot;;
+        curl_setopt($tokenReq, CURLOPT_URL, 
+            &quot;https://api.sandbox.paypal&quot;.
+            &quot;.com/v1/oauth2/token&quot;
+        ); 
+        curl_setopt($tokenReq, CURLOPT_PORT , 443); 
+        curl_setopt($tokenReq, CURLOPT_VERBOSE, 0); 
+        curl_setopt($tokenReq, CURLOPT_HEADER, 0); 
+        curl_setopt($tokenReq, CURLOPT_FOLLOWLOCATION, true); 
+        curl_setopt($tokenReq, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        curl_setopt($tokenReq, CURLOPT_RETURNTRANSFER, 1); 
+        curl_setopt($tokenReq, CURLOPT_HTTPHEADER, array(
+                &quot;Accept: application/json&quot;,
+                &quot;Accept-Language: en_US&quot;,
+                &quot;Content-length: &quot;.strlen($postData)
+            )
+        ); 
+        curl_setopt($tokenReq, CURLOPT_USERPWD, $this-&gt;auth);
+        curl_setopt($tokenReq, CURLOPT_POST,true); 
+        curl_setopt($tokenReq, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($tokenReq, CURLOPT_SSL_VERIFYHOST, 0); 
+        curl_setopt($tokenReq, CURLOPT_SSL_VERIFYPEER, 0); 
+        curl_setopt($tokenReq, CURLOPT_POSTFIELDS,$postData); 
+        $this-&gt;tData = json_decode(curl_exec($tokenReq)); 
+        curl_close($tokenReq);
+    }
+    private function request($uri,$postData){
+        $postData = json_encode($postData);
+        $tokenReq = curl_init();
+        curl_setopt($tokenReq, CURLOPT_URL, &quot;https://api.sandbox.paypal.com&quot;.$uri); 
+        curl_setopt($tokenReq, CURLOPT_PORT , 443); 
+        curl_setopt($tokenReq, CURLOPT_VERBOSE, 0); 
+        curl_setopt($tokenReq, CURLOPT_HEADER, 0); 
+        curl_setopt($tokenReq, CURLOPT_FOLLOWLOCATION, true); 
+        curl_setopt($tokenReq, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        curl_setopt($tokenReq, CURLOPT_RETURNTRANSFER, 1); 
+        if(strlen($postData)!=0){
+            curl_setopt($tokenReq, CURLOPT_POST,true);
+            curl_setopt($tokenReq, CURLOPT_HTTPHEADER, array(
+                &quot;Content-Type: application/json&quot;,
+                &quot;Accept-Language: en_US&quot;,
+                &quot;Authorization:Bearer &quot;.$this-&gt;tData-&gt;access_token,
+                &quot;Content-length: &quot;.strlen($postData)
+                )
+            );
+            curl_setopt($tokenReq, CURLOPT_POSTFIELDS,$postData); 
+        }else{
+            curl_setopt($tokenReq, CURLOPT_HTTPHEADER, array(
+                    &quot;Content-Type: application/json&quot;,
+                    &quot;Accept-Language: en_US&quot;,
+                    &quot;Authorization:Bearer &quot;.$this-&gt;tData-&gt;access_token
+                )
+            ); 
+            curl_setopt($curl_handle, CURLOPT_HTTPGET, TRUE);
+        }
+        curl_setopt($tokenReq, CURLOPT_SSL_VERIFYHOST, 0); 
+        curl_setopt($tokenReq, CURLOPT_SSL_VERIFYPEER, 0); 
+        return json_decode(curl_exec($tokenReq)); 
+        curl_close($tokenReq);
+    } 
+    public function createPayment($price,$description){
+        $f=[
+            &quot;intent&quot;=&gt;&quot;sale&quot;,
+            &quot;payer&quot;=&gt;[
+                &quot;payment_method&quot;=&gt;&quot;paypal&quot;
+            ],
+            &quot;redirect_urls&quot;=&gt;[
+                &quot;return_url&quot;=&gt;$this-&gt;options[&#39;return&#39;],
+                &quot;cancel_url&quot;=&gt;$this-&gt;options[&#39;cancel&#39;]
+            ],
+            &quot;transactions&quot;=&gt;[
+                [
+                    &quot;amount&quot;=&gt;[
+                        &quot;total&quot;=&gt;$price,
+                        &quot;currency&quot;=&gt;&quot;USD&quot;
+                    ],
+                    &quot;description&quot;=&gt;$description
+                ]
+            ]
+        ];
+        $data = $this-&gt;request(&quot;/v1/payments/payment/&quot;,$f);
+        if (
+            preg_match(
+                &#39;%^https://www\.sandbox\.paypal\.com/&#39;.
+                &#39;cgi-bin/webscr\?cmd=_express-checkout&amp;token=(.*?)$%&#39;,
+                $data-&gt;links[1]-&gt;href, 
+                $regs
+            )
+        ){
+            $this-&gt;m-&gt;delete($regs[1]);
+            $this-&gt;m-&gt;add($regs[1],$data-&gt;id,600);
+        }
+        return [ $data-&gt;links[1]-&gt;href, $data ];
+    }
+    public function checkPayment(){
+        $f=[&quot;payer_id&quot; =&gt; ($_GET[&#39;PayerID&#39;]) ];
+        $req = $this-&gt;request(&quot;/v1/payments/payment/&quot;.$this-&gt;m-&gt;get($_GET[&#39;token&#39;]).&quot;/execute/&quot;,$f);
+        $return_class =  new $this-&gt;options[&#39;dataClass&#39;];
+        $return_class-&gt;payment([ 
+            &quot;state&quot; =&gt; $req-&gt;state, 
+            &quot;stateSale&quot; =&gt; $req-&gt;transactions[0]-&gt;related_resources[0]-&gt;sale-&gt;state, 
+            &quot;id&quot; =&gt; $req-&gt;id, 
+            &quot;payer&quot; =&gt; $req-&gt;payer, 
+            &quot;txn&quot; =&gt; $req-&gt;transactions[0]-&gt;related_resources[0]-&gt;sale-&gt;id,
+            &quot;raw&quot; =&gt; $req
+        ]);
+    }
+    public function IPN(){
+        $return_class =  new $this-&gt;options[&#39;dataClass&#39;];
+        $return_class-&gt;paymentIPN($_POST);
+    }
+}
+	</pre>
+</p>					</div>
+					<hr/>										<h2>Youtube Downloading Script - 2013-03-13</h2>
+					<div class="inner">
+						
+
+<center><img src="/media/b23bf587009f7342d43cb9cc0f057a30.jpg" class="img" /></center>
+
+Oh man youtube downloading is a pain, well if you know a bit of PHP then this trouble is a thing of the past.
+
+<pre class="prettyprint">
+&lt;?php
+function cmp($a, $b)
+{
+    if ($a['itag'] == $b['itag'])
+    {
+        return 0;
+    }
+    return ($a['itag'] &gt; $b['itag']) ? -1 : 1;
+}
+class YoutubeDownload
+{
+    private $youtubeInfo = array();
+    public $youtubeArrayInfo = array();
+    /*
+    $url variable is the youtube url,
+    then the video ID is parsed out and 
+    the video info is retrieved. 
+    */
+    public function fetch($url)
+    {
+        if (preg_match('/v=([_0-9a-zA-Z]+)/m', $url, $videoID))
+        {
+            $this-&gt;youtubeInfo = explode(&quot;&amp;&quot;,file_get_contents(&quot;http://www.youtube.com/get_video_info?video_id=&quot;.$videoID[1].&quot;&amp;fmt=47&quot;));
+            $this-&gt;parse();
+        }
+        else
+        {
+            $this-&gt;error( &quot;Url not a youtube link!&quot; );
+            return array(
+                &quot;error&quot; =&gt; &quot;Not proper youtube video URL&quot;,
+                &quot;code&quot; =&gt; 1
+            );
+        }
+    }
+    private function parse()
+    {
+        foreach( $this-&gt;youtubeInfo as $arr )
+        {
+            $entry = explode(&quot;=&quot;,$arr);
+            $this-&gt;youtubeArrayInfo[ ( $entry[0] ) ] = urldecode($entry[1]);
+            
+        }
+        $this-&gt;youtubeArrayInfo['streams'] = array();
+        $tmpMap = explode(&quot;,&quot;,$this-&gt;youtubeArrayInfo['url_encoded_fmt_stream_map']);
+        foreach($tmpMap as $tmps)
+        {
+            $tmpEntry = array();
+            $vMap = explode(&quot;&amp;&quot;,$tmps);
+            foreach($vMap as $vs)
+            {
+                $entry = explode(&quot;=&quot;,$vs);
+                $tmpEntry[($entry[0])] = urldecode($entry[1]);
+            }
+            $this-&gt;youtubeArrayInfo['streams'][] = $tmpEntry;
+        }
+        usort($this-&gt;youtubeArrayInfo['streams'], &quot;cmp&quot;);
+    }
+    private function getHighestQuality()
+    {
+        $bestQuality = array();
+        foreach( $this-&gt;youtubeArrayInfo['streams'] as $stream )
+        {
+            if ( preg_match( '/hd1080/m', $stream['quality'] ) )
+            {
+                $bestQuality = $stream;
+            }
+        }
+        if( count( $bestQuality) == 0 )
+        {
+            foreach( $this-&gt;youtubeArrayInfo['streams'] as $stream )
+            {
+                if ( $stream['itag']&gt;46 &amp;&amp; $stream['itag']&lt;48 )
+                {
+                    $bestQuality = $stream;
+                }
+            }
+        }
+        return $bestQuality;
+    }
+    public function download($saveToFile)
+    {
+        $stream = $this-&gt;getHighestQuality();
+        $url = $stream['url'].&quot;&amp;signature=&quot;.$stream['sig'];
+        if ($file = fopen($url, 'rb'))
+        {
+            $fp = fopen($saveToFile, 'w');
+            while(!feof($file) &amp;&amp; (connection_status()==0))
+            {
+                fwrite($fp, fread($file, 1024*8));
+            }
+            fclose($file);
+            fclose($fp);
+        }
+        
+    }
+    private function error($error)
+    {
+        trigger_error($error, E_USER_ERROR);
+    }
+}
+$n = new YoutubeDownload();
+$n-&gt;fetch(&quot;http://www.youtube.com/watch?v=ngxD7IIslg8&amp;list=UUOlqMzbUH_dOtwU_mJn-nsg&amp;index=1&quot;);
+$n-&gt;download(&quot;cookies.webm&quot;);
+</pre>					</div>
+					<hr/>										<h2>Oh Hello There! - 2012-10-21</h2>
+					<div class="inner">
+						
+<p>
+So here we are, another developers blog.. This blog will contain updates on my personal projects and discovery. This will include code snippets and links + tutorials on how to accomplish specific tasks on the internet without having to go through the annoying bits yourself. I will be providing tools soon that will make setting up linux servers a lot simpler.<br />
+<br />
+<center><img src='/media/284620a9f4bfcd510378e106ea4224af.jpg' class="img" /></center>
+<br />
+</p>					
+</div>
+<div style="display:none;" id="sheader">
+	<h3>Development Blog</h3>
+	<h4>Nathaniel Davidson, Web Developer</h4>
+</div>
+<script type="text/javascript">
+	$("section.header").animate({"height":"140px"});
+	$("section.header").html($("#sheader").html());
+</script>

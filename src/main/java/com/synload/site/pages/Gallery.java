@@ -18,7 +18,7 @@ public class Gallery {
 				"templates/gallery.html",
 				"section.header",
 				"index",
-				"Synload Home"
+				" Home"
 			)
 		);
 	}
