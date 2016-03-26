@@ -45,6 +45,7 @@
 	$("section.header").html($("#sheader").html());
 </script>
 <script type="text/javascript">
+	console.log("{{modules}}");
 	var data = $.parseJSON("{{modules}}");
 	$("#modules").html("");
 	$.each(data,function(i,v){
