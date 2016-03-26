@@ -31,17 +31,6 @@
         <!-- Lastly, call the galleryView() function on your unordered list(s) -->
         <script type="text/javascript">
             $(function(){
-                $('#myGallery').galleryView({
-                    transition_speed: 600,
-                    autoplay: true,
-                    panel_animation: 'slide',
-                    show_captions: true,
-                    panel_width: 900,
-                    panel_height: 450,
-                    show_filmstrip: false,
-                    pan_images: false,
-                    show_infobar: true
-                });
                 connect("synload.com:7050",function(){
                     _sf.request('get','menu');
                     _sf.request('get','gallery');
