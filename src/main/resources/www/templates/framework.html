@@ -45,12 +45,11 @@
 	$("section.header").html($("#sheader").html());
 </script>
 <script type="text/javascript">
-	console.log("{{data.modules}}");
-	var data = $.parseJSON("{{data.modules}}");
+	var data = $.parseJSON('{{data.modules}}');
 	$("#modules").html("");
-	$.each(data,function(i,v){
+	$.each(data, function(i,v){
     	if($("#modules").html()!=""){
-    		$("#modules").html($("#modules").html()+",")
+    		$("#modules").html($("#modules").html()+",");
     	}
 		$("#modules").html($("#modules").html()+" "+v.name+" v"+v.version);
 	});
