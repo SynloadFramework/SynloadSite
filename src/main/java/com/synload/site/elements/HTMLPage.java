@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import com.synload.framework.handlers.Response;
 import com.synload.framework.modules.ModuleLoader;
+import com.synload.framework.modules.ModuleResource;
 import com.synload.framework.ws.WSHandler;
 import com.synload.site.sql.Page;
 
@@ -12,7 +13,7 @@ public class HTMLPage extends Response {
 		this.setTemplateId("htmlp["+page.getId()+"]");
 		if(!templateCache.contains(this.getTemplateId())){
 			try {
-				this.setTemplate(this.getTemplate(new String(ModuleLoader.resources.get("synloadsite").get(page.getTemplate()),"UTF-8")));
+				this.setTemplate(this.getTemplate(new String(ModuleResource.get("synloadsite", page.getTemplate()),"UTF-8")));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}

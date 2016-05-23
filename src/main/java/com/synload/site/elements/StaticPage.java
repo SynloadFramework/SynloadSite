@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.synload.framework.handlers.Response;
 import com.synload.framework.modules.ModuleLoader;
+import com.synload.framework.modules.ModuleResource;
 import com.synload.framework.ws.WSHandler;
 
 public class StaticPage extends Response {
@@ -15,7 +16,7 @@ public class StaticPage extends Response {
 		this.setTemplateId("staticp["+page+"]");
 		if(!templateCache.contains(this.getTemplateId())){
 			try {
-				this.setTemplate(this.getTemplate(new String(ModuleLoader.resources.get("synloadsite").get(page),"UTF-8")));
+				this.setTemplate(this.getTemplate(new String(ModuleResource.get("synloadsite", page),"UTF-8")));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}

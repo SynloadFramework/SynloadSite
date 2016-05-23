@@ -4,12 +4,11 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.synload.eventsystem.events.RequestEvent;
-import com.synload.framework.modules.annotations.Event;
-import com.synload.framework.modules.annotations.Event.Type;
+import com.synload.framework.ws.annotations.WSEvent;
 import com.synload.site.elements.StaticPage;
 
 public class Blog {
-	@Event(name="Blog.getBlogPage", description="getBlogPage",trigger={"get","blog"},flags={},type=Type.WEBSOCKET)
+	@WSEvent(name="Blog.getBlogPage", description="getBlogPage",method="get",action="blog",enabled=true)
 	public void getBlogPage(RequestEvent event) throws JsonProcessingException, IOException{
 		event.getSession().send(
 			new StaticPage(
