@@ -3,10 +3,7 @@ package com.synload.site.sql;
 import java.sql.ResultSet;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.synload.framework.modules.annotations.sql.BigIntegerColumn;
-import com.synload.framework.modules.annotations.sql.LongBlobColumn;
-import com.synload.framework.modules.annotations.sql.SQLTable;
-import com.synload.framework.modules.annotations.sql.StringColumn;
+import com.synload.framework.sql.annotations.*;
 import com.synload.framework.sql.Model;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "class")
