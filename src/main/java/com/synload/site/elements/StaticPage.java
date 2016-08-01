@@ -12,7 +12,7 @@ import com.synload.framework.modules.ModuleResource;
 import com.synload.framework.ws.WSHandler;
 
 public class StaticPage extends Response {
-	public StaticPage(WSHandler user, List<String> templateCache, String page, String parent, String parentTemplate, String title){
+	public StaticPage(List<String> templateCache, String page, String parent, String parentTemplate, String title){
 		this.setTemplateId("staticp["+page+"]");
 		if(!templateCache.contains(this.getTemplateId())){
 			try {

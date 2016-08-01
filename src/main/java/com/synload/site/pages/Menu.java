@@ -14,7 +14,6 @@ public class Menu {
 	public void getGalleryPage(RequestEvent event) throws JsonProcessingException, IOException{
 		event.getResponse().send(
 			new StaticPage(
-				event.getSession(),
 				event.getRequest().getTemplateCache(),
 				"templates/menu.html",
 				"div.menu",

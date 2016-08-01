@@ -14,7 +14,6 @@ public class Blog {
 	public void getBlogPage(RequestEvent event) throws JsonProcessingException, IOException{
 		event.getResponse().send(
 			new StaticPage(
-				event.getSession(),
 				event.getRequest().getTemplateCache(),
 				"templates/blogentry.html",
 				"section.content-wrap",

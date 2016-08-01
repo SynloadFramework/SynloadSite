@@ -9,7 +9,7 @@ import com.synload.framework.ws.WSHandler;
 import com.synload.site.sql.Page;
 
 public class HTMLPage extends Response {
-	public HTMLPage(WSHandler user, List<String> templateCache, Page page){
+	public HTMLPage(List<String> templateCache, Page page){
 		this.setTemplateId("htmlp["+page.getId()+"]");
 		if(!templateCache.contains(this.getTemplateId())){
 			try {

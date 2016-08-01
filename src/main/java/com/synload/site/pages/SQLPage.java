@@ -22,7 +22,6 @@ public class SQLPage {
 				p = Page._find(Page.class, "id=?", page).limit("1").exec(Page.class).get(0);
 				event.getResponse().send(
 					new HTMLPage(
-						event.getSession(),
 						event.getRequest().getTemplateCache(),
 						p
 					)

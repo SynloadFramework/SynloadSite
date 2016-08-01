@@ -14,7 +14,6 @@ public class ProjectList {
 	public void getGalleryPage(RequestEvent event) throws JsonProcessingException, IOException{
 		event.getResponse().send(
 			new StaticPage(
-				event.getSession(),
 				event.getRequest().getTemplateCache(),
 				"templates/projectImageList.html",
 				"section.content-wrap",
